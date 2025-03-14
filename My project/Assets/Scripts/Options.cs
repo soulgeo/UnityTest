@@ -4,11 +4,13 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class Options : MonoBehaviour
 {
     public AudioMixer audioMixer;
+    public GameObject overlay;
 
     public TMP_Dropdown resolutionDropdown;
     public TMP_Dropdown windowModeDropdown;
@@ -17,6 +19,32 @@ public class Options : MonoBehaviour
 
     Resolution[] resolutions;
     RefreshRate refreshRate;
+
+    void Awake()
+    {
+        switch (PlayerPrefs.GetInt("WindowMode"))
+        {
+            case 0:
+                Screen.fullScreenMode = FullScreenMode.Windowed;
+                break;
+            case 1:
+                Screen.fullScreenMode = FullScreenMode.ExclusiveFullScreen;
+                break;
+            case 2:
+                Screen.fullScreenMode = FullScreenMode.FullScreenWindow;
+                break;
+            default:
+                break;
+        }
+
+        int screenWidth = PlayerPrefs.GetInt("ScreenWidth");
+        int screenHeight = PlayerPrefs.GetInt("ScreenHeight");
+        Screen.SetResolution(screenWidth, screenHeight, Screen.fullScreenMode);
+
+        float volume = AudioManager.LinearToDecibel(PlayerPrefs.GetFloat("Volume", 0.75f));
+        audioMixer.SetFloat("masterVolume", volume);
+        Debug.Log("WindowMode: " + PlayerPrefs.GetInt("WindowMode") + ", ScreenResolution: " + screenWidth + " x " + screenHeight + ", Volume: " + volume + ".");
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -68,11 +96,13 @@ public class Options : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void SetWindowMode(int windowModeIndex)
     {
+
+
         PlayerPrefs.SetInt("WindowMode", windowModeIndex);
         switch (windowModeIndex)
         {
@@ -89,6 +119,8 @@ public class Options : MonoBehaviour
                 break;
         }
         PlayerPrefs.Save();
+
+        //ForceReset();
     }
 
     public void SetResolution(int resolutionIndex)
@@ -98,14 +130,20 @@ public class Options : MonoBehaviour
         PlayerPrefs.SetInt("ScreenHeight", r.height);
         Screen.SetResolution(r.width, r.height, Screen.fullScreenMode);
         PlayerPrefs.Save();
+
+        //ForceReset();
     }
 
     public void SetQuality(int qualityIndex)
     {
+
+
         PlayerPrefs.SetInt("Quality", qualityIndex);
         Debug.Log("Changing Quality to " + qualityIndex);
         QualitySettings.SetQualityLevel(qualityIndex);
         PlayerPrefs.Save();
+
+        //ForceReset();
     }
 
     public void SetVolume(float volume)
@@ -115,4 +153,30 @@ public class Options : MonoBehaviour
         audioMixer.SetFloat("masterVolume", dB);
         PlayerPrefs.Save();
     }
+
+    public void ForceReset()
+    {
+        StartCoroutine(ResetOverlay());
+    }
+
+    private IEnumerator ResetOverlay()
+    {
+        // Optionally clear any current selection
+        if (EventSystem.current != null)
+            EventSystem.current.SetSelectedGameObject(null);
+
+        // Disable the overlay
+        FindObjectOfType<PauseMenu>().optionsMenuUI.SetActive(false);
+
+        // Wait one frame (you can increase the delay if needed)
+        yield return null;
+
+        // Re-enable the overlay
+        FindObjectOfType<PauseMenu>().optionsMenuUI.SetActive(false);
+
+        // Clear selection again after reactivation if needed
+        if (EventSystem.current != null)
+            EventSystem.current.SetSelectedGameObject(null);
+    }
+
 }

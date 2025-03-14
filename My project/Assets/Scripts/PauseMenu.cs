@@ -4,6 +4,8 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -42,7 +44,7 @@ public class PauseMenu : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Keyboard.current[Key.F1].wasPressedThisFrame)
         {
             if (!gameIsPaused || inOptions) 
             {
@@ -95,14 +97,14 @@ public class PauseMenu : MonoBehaviour
     {
         audioManager.Play("Select");
         audioManager.setMixerToPaused();
-        GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
+        //GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
         pauseMenuUI.SetActive(true);
         optionsMenuUI.SetActive(false);
         guideUI.SetActive(false);
         gameIsPaused = true;
         Time.timeScale = 0;
         inOptions = false;
-
+        Cursor.visible = true;
     }
 
     public void Resume()
@@ -110,10 +112,11 @@ public class PauseMenu : MonoBehaviour
         audioManager.Play("Select");
         Time.timeScale = 1;
         audioManager.setMixerToPlaying(resumeFade);
-        GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceCamera;
+        //GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceCamera;
         pauseMenuUI.SetActive(false);
         guideUI.SetActive(false);
         gameIsPaused = false;
+        Cursor.visible = false;
     }
 
 
@@ -145,5 +148,7 @@ public class PauseMenu : MonoBehaviour
         }
         Time.timeScale = 1;
     }
+
+    
 
 }

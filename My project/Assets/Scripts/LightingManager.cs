@@ -47,6 +47,26 @@ public class LightingManager : MonoBehaviour
         {
             directionalLight.color = preset.directionalColor.Evaluate(timePercent);
             directionalLight.transform.localRotation = Quaternion.Euler(new Vector3((timePercent * 360f) - 90f, 170f, 0));
+            if (timePercent < 0.2f)
+            {
+                RenderSettings.reflectionIntensity = 0f;
+            }
+            else if (timePercent < 0.3f)
+            {
+                RenderSettings.reflectionIntensity = (timePercent - 0.2f) / 0.1f;
+            }
+            else if (timePercent < 0.7f)
+            {
+                RenderSettings.reflectionIntensity = 1f;
+            }
+            else if (timePercent < 0.8f)
+            {
+                RenderSettings.reflectionIntensity = 1f - (timePercent - 0.7f) / 0.1f;
+            }
+            else
+            {
+                RenderSettings.reflectionIntensity = 0f;
+            }
             //DynamicGI.UpdateEnvironment();
         }
 
@@ -71,6 +91,7 @@ public class LightingManager : MonoBehaviour
     private void LateUpdate()
     {
         DynamicGI.UpdateEnvironment();
+        
     }
 
     private void OnValidate()
