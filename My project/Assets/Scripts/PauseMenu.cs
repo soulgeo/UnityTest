@@ -44,7 +44,7 @@ public class PauseMenu : MonoBehaviour
 
     void Update()
     {
-        if (Keyboard.current[Key.F1].wasPressedThisFrame)
+        if (Keyboard.current[Key.Escape].wasPressedThisFrame)
         {
             if (!gameIsPaused || inOptions) 
             {

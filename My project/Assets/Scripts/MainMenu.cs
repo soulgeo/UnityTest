@@ -9,7 +9,6 @@ public class MainMenu : MonoBehaviour
     public GameObject optionsMenuUI;
     public GameObject mainMenuUI;
     public GameObject credits;
-    public GameObject leaderboard;
 
     AudioManager audioManager;
     public AudioMixer audioMixer;
@@ -45,7 +44,7 @@ public class MainMenu : MonoBehaviour
 
         optionsMenuUI.SetActive(false);
         mainMenuUI.SetActive(true);
-        leaderboard.SetActive(false);
+
         credits.SetActive(false);
     }
 
@@ -65,15 +64,7 @@ public class MainMenu : MonoBehaviour
 
     void Play()
     {
-        SceneManager.LoadScene("Level01");
-    }
-
-    public void Leaderboard()
-    {
-        audioManager.Play("Select");
-        mainMenuUI.SetActive(false);
-        leaderboard.SetActive(true);
-        inSubMenu = true;
+        SceneManager.LoadScene("Scene01");
     }
 
     public void Options()
@@ -104,7 +95,6 @@ public class MainMenu : MonoBehaviour
         mainMenuUI.SetActive(true);
         optionsMenuUI.SetActive(false);
         credits.SetActive(false);
-        leaderboard.SetActive(false);
         inSubMenu = false;
     }
 
